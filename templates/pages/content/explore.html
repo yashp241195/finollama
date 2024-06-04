@@ -1,0 +1,76 @@
+{% extends "layout/no-auth.html" %}
+
+{% block title %}Finollama - Explore{% endblock %}
+
+{% block content %}
+<div class="container mt-3" style="padding-top: 5px; border: 1px solid #fff;">
+    <form method="POST">
+        <div class="row g-3 align-items-center">
+            <div class="col-12">
+                <input type="text" class="form-control" id="search-url" name="url" placeholder="Enter URL" value="{{ url }}">
+            </div>
+            <div class="col-12 d-flex justify-content-between mt-2">
+                <button type="submit" class="btn btn-primary btn-sm" id="search-btn">Go</button>
+            </div>
+        </div>
+    </form>
+
+    {% if data %}
+    <div class="mt-3">
+        <span class="badge rounded-pill text-bg-success">
+            Safe
+            <span class="badge text-bg-light">{{ data.outline.safe_count }}</span>
+        </span>
+        <span class="badge rounded-pill text-bg-danger">
+            Misleading
+            <span class="badge text-bg-light">{{ data.outline.misleading_count }}</span>
+        </span>
+        <span class="badge rounded-pill text-bg-warning">
+            Context required
+            <span class="badge text-bg-light">{{ data.outline.context_required_count }}</span>
+        </span>
+        <span class="badge rounded-pill text-bg-secondary">
+            Unverified
+            <span class="badge text-bg-light">{{ data.outline.unverified_count }}</span>
+        </span>
+    </div>
+
+    <div class="mt-4">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#analysis">Analysis</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#text">Text</a>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-3">
+            <div class="tab-pane fade show active" id="analysis">
+                {% for item in data.analysis %}
+                <div class="container mt-2 p-2" style="border: 1px solid #efefef; border-radius: 5px;">
+                    <div>{{ item.sentence }}</div>
+                    <div class="badge-container">
+                        <span class="badge rounded-pill text-bg-primary">{{ item.type }}</span>
+                        {% if item.rating == "safe" %}
+                        <span class="badge rounded-pill text-bg-success">Safe</span>
+                        {% elif item.rating == "unsafe" %}
+                        <span class="badge rounded-pill text-bg-danger">Unsafe</span>
+                        {% elif item.rating == "context_required" %}
+                        <span class="badge rounded-pill text-bg-warning">Context Required</span>
+                        {% endif %}
+                        <span class="badge rounded-pill text-bg-primary">{{ item.verify }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="tab-pane fade" id="text">
+                <div class="mt-2">
+                    {{ data.text }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
