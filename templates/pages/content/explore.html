@@ -1,0 +1,96 @@
+{% extends "layout/no-auth.html" %}
+
+{% block title %}Finollama - Explore{% endblock %}
+
+{% block content %}
+<div class="container mt-3" style="padding-top: 5px; border: 1px solid #ddd;">
+    <form method="POST" class="mb-3">
+        <div class="row g-3 align-items-center">
+            <div class="col-12">
+                <input type="text" class="form-control" id="search-url" name="url" placeholder="Enter URL" value="{{ url }}">
+            </div>
+            <div class="col-12 d-flex justify-content-end mt-2">
+                <button type="submit" class="btn btn-primary btn-sm" id="search-btn">Search</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Progress Bar -->
+    <div class="progress mb-3" id="progress-container" style="display: none;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger mt-3" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    {% if content %}
+    <div class="mt-4">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#text">Text</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#facts">Facts</a>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-3">
+            <div class="tab-pane fade show active" id="text">
+                <div class="mt-2">
+                    {{ content }}
+                </div>
+            </div>
+            <div class="tab-pane fade" id="facts">
+                <div class="mt-2">
+                    {% if facts %}
+                    <h5>50 Words Summary</h5>
+                    <p>{{ facts['50_words_summary'] }}</p>
+
+                    <h5>List of Facts</h5>
+                    <ul class="list-group">
+                        {% for fact in facts['list_of_facts'] %}
+                        <li class="list-group-item">
+                            <strong>Fact:</strong> {{ fact.fact }}<br>
+                            <strong>Accuracy:</strong> {{ fact.accurate }}<br>
+                            {% if fact.explanation %}
+                            <strong>Explanation:</strong> {{ fact.explanation }}
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p>No facts available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.getElementById('search-btn').addEventListener('click', function() {
+        document.getElementById('progress-container').style.display = 'block';
+        var progressBar = document.getElementById('progress-bar');
+        var width = 0;
+        
+        // Simulate progress (adjust timeouts as needed)
+        var interval = setInterval(function() {
+            if (width >= 100) {
+                clearInterval(interval);
+                progressBar.style.width = '100%';
+                progressBar.setAttribute('aria-valuenow', '100');
+                progressBar.innerHTML = 'Complete';
+            } else {
+                width += 10;
+                progressBar.style.width = width + '%';
+                progressBar.setAttribute('aria-valuenow', width);
+                progressBar.innerHTML = width + '%';
+            }
+        }, 500); // Increase progress every 500ms
+    });
+</script>
+{% endblock %}
